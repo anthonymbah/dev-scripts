@@ -1,6 +1,8 @@
 const path = require("path");
 const webpack = require("webpack");
 const ManifestPlugin = require('webpack-manifest-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin')
+const CopyHtmlWebpackPlugin = require('./plugins/copy-html-webpack-plugin');
 
 const DIST = 'dist';
 
@@ -9,7 +11,7 @@ module.exports = {
 	output: {
 		path: path.resolve(__dirname, 'dist'),
 		filename: '[name].[hash].js',
-		publicPath: '/dist/',
+		//publicPath: '/dist/',
 	},
 	devtool: 'source-map',
 	devServer: {
@@ -17,7 +19,7 @@ module.exports = {
 		watchContentBase: false,
 		// hotOnly: true,
 		hot: false,
-		publicPath: '/dist/',
+		//publicPath: '/dist/',
 	},
   	module: {
     	rules: [
@@ -33,9 +35,11 @@ module.exports = {
     	],
   },
   plugins: [
+	    new CleanWebpackPlugin(['dist/*.*']),
     	new webpack.NamedModulesPlugin(),
     	new webpack.HotModuleReplacementPlugin(),
-    	new ManifestPlugin(),
+		new ManifestPlugin(),
+		new CopyHtmlWebpackPlugin(),
   ],
   resolveLoader: {
   	alias: {
