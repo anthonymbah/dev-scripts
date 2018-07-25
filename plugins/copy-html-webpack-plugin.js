@@ -1,7 +1,6 @@
 const copy = require('recursive-copy');
 const path = require('path');
 const through = require('through2');
-const manifest = require('../dist/manifest.json');
  
 const options = {
     overwrite: true,
@@ -9,7 +8,7 @@ const options = {
     dot: true,
     junk: true,
     filter: [
-        'src/*.html',
+        '../src/*.html',
         '!.htpasswd'
     ],
     rename: function(filePath) {
@@ -36,19 +35,26 @@ class CopyHtmlWebpackPlugin {
 
         
       compiler.hooks.done.tap('CopyHtmlWebpackPlugin', () => {
-        console.log('Hello World!');
-        console.log(manifest['app.js']);
-        
+        const manifest = require('../dist/manifest.json');
+        console.log('MANIFEST', manifest);
 
-      });
+        copy('src', 'dist', options)
+    .on(copy.events.COPY_FILE_START, function(copyOperation) {
+        console.info('Copying file ' + copyOperation.src + '...');
+    })
+    .on(copy.events.COPY_FILE_COMPLETE, function(copyOperation) {
+        console.info('Copied to ' + copyOperation.dest);
+    })
+    .on(copy.events.ERROR, function(error, copyOperation) {
+        console.error('Unable to copy ' + copyOperation.dest);
+    })
+    .then(function(results) {
+        console.info(results.length + ' file(s) copied');
+    })
+    .catch(function(error) {
+        return console.error('Copy failed: ' + error);
+    });
 
-      compiler.hooks.emit.tapPromise('HelloAsyncPlugin', (compilation) => {
-        return new Promise((resovle, reject) => {
-            resolve();
-        })
-          .then(() => {
-            console.log('Done with async work...');
-          });
       });
     }
   }
