@@ -3,38 +3,19 @@ const webpack = require("webpack");
 const ManifestPlugin = require('webpack-manifest-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin')
 const CopyHtmlWebpackPlugin = require('./plugins/copy-html-webpack-plugin');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
-const DIST = 'dist';
+const copyHtmlWebpackAddon = require('./plugins/copy-html-webpack-addon');
 
-var options = {
-	resources: [
-		`${path.resolve(__dirname, 'dist')}/manifest.json`,
-	],
-	delay: 1000, // initial delay in ms, default 0
-	interval: 100, // poll interval in ms, default 250ms
-	timeout: 5000, // timeout in ms, default Infinity
-	window: 1000, // stabilization time in ms, default 750ms   
-  };
-
-let manifest = null;
-const transform = content => {
-	// console.log(__dirname);
-	//manifest = manifest || require('./dist/manifest.json'); 
-	// console.log(context);
-	return new Promise((resolve, reject) => {
-			// manifest = manifest || require('./dist/manifest.json'); 
-				resolve(content.toString());
-	});
-	// return content.toString();
+const serialize = manifest => { 
+	copyHtmlWebpackAddon({ manifest, debug: false});
+	return JSON.stringify(manifest, null, 2);
 };
 const pattens = [{ 
 	flatten: true,
-	from: 'src/*.html', 
-	transform,
+	from: 'src/*.jpg', 
 }];
 
 module.exports = {
-	entry: { app: './src/app.js'},
+	entry: { app: './src/app.js', page: './src/page.js'},
 	output: {
 		path: path.resolve(__dirname, 'dist'),
 		filename: '[name].[hash].js',
@@ -65,9 +46,8 @@ module.exports = {
 	    new CleanWebpackPlugin(['dist/*.*']),
     	new webpack.NamedModulesPlugin(),
     	new webpack.HotModuleReplacementPlugin(),
-		new ManifestPlugin(),
+		new ManifestPlugin({ writeToFileEmit: true, serialize }),
 		new CopyWebpackPlugin(pattens, { debug: false }),
-		new CopyHtmlWebpackPlugin(),
   ],
   resolveLoader: {
   	alias: {
