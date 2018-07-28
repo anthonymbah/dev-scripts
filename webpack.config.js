@@ -1,13 +1,22 @@
 /*global __dirname*/
 const path = require('path');
 const webpack = require('webpack');
+const {
+	NamedModulesPlugin,
+	HotModuleReplacementPlugin,
+} = webpack;
 const ManifestPlugin = require('webpack-manifest-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const copyHtmlWebpackAddon = require('./add-ons/copy-html-webpack-addon');
 
 const serialize = manifest => { 
-	copyHtmlWebpackAddon({ manifest, debug: false});
+	copyHtmlWebpackAddon({ 
+		manifest, 
+		debug: false,
+		src: 'src/*.html',
+		dist: path.resolve(__dirname, 'dist'),
+	});
 	return JSON.stringify(manifest, null, 2);
 };
 const pattens = [{ 
@@ -43,8 +52,8 @@ module.exports = {
 		],},
 	plugins: [
 		new CleanWebpackPlugin(['dist/**/*.*']),
-		new webpack.NamedModulesPlugin(),
-		new webpack.HotModuleReplacementPlugin(),
+		new NamedModulesPlugin(),
+		new HotModuleReplacementPlugin(),
 		new ManifestPlugin({ writeToFileEmit: true, serialize }),
 		new CopyWebpackPlugin(pattens, { debug: false }),
 	],
