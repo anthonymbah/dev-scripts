@@ -1,9 +1,10 @@
-const path = require("path");
-const webpack = require("webpack");
+/*global __dirname*/
+const path = require('path');
+const webpack = require('webpack');
 const ManifestPlugin = require('webpack-manifest-plugin');
-const CleanWebpackPlugin = require('clean-webpack-plugin')
-const CopyHtmlWebpackPlugin = require('./plugins/copy-html-webpack-plugin');
-const copyHtmlWebpackAddon = require('./plugins/copy-html-webpack-addon');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const copyHtmlWebpackAddon = require('./add-ons/copy-html-webpack-addon');
 
 const serialize = manifest => { 
 	copyHtmlWebpackAddon({ manifest, debug: false});
@@ -28,30 +29,28 @@ module.exports = {
 		// hotOnly: true,
 		hot: false,
 		//publicPath: '/dist/',
-	},
-  	module: {
-    	rules: [
+	},module: {
+		rules: [
 			{
-		    	test: /\.js$/,
-		    	exclude: /node_modules/,
-		    	use: [{ loader: 'babel-loader' }]
+				test: /\.js$/,
+				exclude: /node_modules/,
+				use: [{ loader: 'babel-loader' }]
 			},
 			{
-		    	test: /\.html$/,
-		    	use: ['my-loader']
+				test: /\.html$/,
+				use: ['my-loader']
 			}
-    	],
-  },
-  plugins: [
-	    new CleanWebpackPlugin(['dist/*.*']),
-    	new webpack.NamedModulesPlugin(),
-    	new webpack.HotModuleReplacementPlugin(),
+		],},
+	plugins: [
+		new CleanWebpackPlugin(['dist/**/*.*']),
+		new webpack.NamedModulesPlugin(),
+		new webpack.HotModuleReplacementPlugin(),
 		new ManifestPlugin({ writeToFileEmit: true, serialize }),
 		new CopyWebpackPlugin(pattens, { debug: false }),
-  ],
-  resolveLoader: {
-  	alias: {
-  		'my-loader': path.resolve(__dirname, 'loaders/my-loader.js')
-  	}
-  }
-}
+	],
+	resolveLoader: {
+		alias: {
+			'my-loader': path.resolve(__dirname, 'loaders/my-loader.js')
+		}
+	}
+};
