@@ -1,4 +1,5 @@
 /*global __dirname*/
+
 const path = require('path');
 const webpack = require('webpack');
 const {
@@ -10,18 +11,18 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const copyHtmlWebpackAddon = require('./add-ons/copy-html-webpack-addon');
 
-const serialize = manifest => { 
-	copyHtmlWebpackAddon({ 
-		manifest, 
+const serialize = manifest => {
+	copyHtmlWebpackAddon({
+		manifest,
 		debug: false,
 		src: 'src/*.html',
 		dist: path.resolve(__dirname, 'dist'),
 	});
 	return JSON.stringify(manifest, null, 2);
 };
-const pattens = [{ 
+const pattens = [{
 	flatten: true,
-	from: 'src/*.jpg', 
+	from: 'src/*.jpg',
 }];
 
 module.exports = {

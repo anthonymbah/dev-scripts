@@ -1,1 +1,3 @@
-export default () => alert('APP LOADED');
+import { alertIt } from './utils';
+
+export default () => alertIt('APP LOADED');

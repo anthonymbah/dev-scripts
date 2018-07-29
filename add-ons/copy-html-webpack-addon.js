@@ -1,20 +1,21 @@
-const { 
-	readFile, 
-	writeFile  
-} = require('fs');
 const gloppy = require('globby');
+
+const {
+	readFile,
+	writeFile
+} = require('fs');
 
 const convertToArray = obj => Object.keys(obj).map(m => ({ key: m, value: obj[m] }));
 
 const getAssets = m => convertToArray(m);
 
-const getFiles = ({src, dist}) => gloppy.sync([src], 
-	{ 
-		transform: entry => { 
+const getFiles = ({src, dist}) => gloppy.sync([src],
+	{
+		transform: entry => {
 			const name = entry.split('/').reverse()[0];
-			return { 
+			return {
 				dist: `${dist}/${name}`,
-				entry, 
+				entry,
 			};
 		}
 	}
