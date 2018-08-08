@@ -10,6 +10,8 @@ const ManifestPlugin = require('webpack-manifest-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const copyHtmlWebpackAddon = require('./add-ons/copy-html-webpack-addon');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 const serialize = manifest => {
 	copyHtmlWebpackAddon({
@@ -47,16 +49,30 @@ module.exports = {
 				use: [{ loader: 'babel-loader' }]
 			},
 			{
-				test: /\.html$/,
-				use: ['my-loader']
-			}
+        test: /\.css$/,
+        use: [
+          {
+            loader: MiniCssExtractPlugin.loader,
+          },
+          "css-loader"
+        ]
+      }
+			// {
+			// 	test: /\.html$/,
+			// 	use: ['my-loader']
+			// }
 		],},
 	plugins: [
 		new CleanWebpackPlugin(['dist/**/*.*']),
 		new NamedModulesPlugin(),
 		new HotModuleReplacementPlugin(),
-		new ManifestPlugin({ writeToFileEmit: true, serialize }),
+		new ManifestPlugin({ writeToFileEmit: true }),
 		new CopyWebpackPlugin(pattens, { debug: false }),
+		new MiniCssExtractPlugin({
+			filename: "[name].[hash].css",
+      		chunkFilename: "[id].[hash].css"
+    	}),
+		new HtmlWebpackPlugin(),
 	],
 	resolveLoader: {
 		alias: {
