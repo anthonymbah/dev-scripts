@@ -21,7 +21,7 @@
 
   <% for (let css of htmlWebpackPlugin.files.css) { %>
 	<% if (css.includes(htmlWebpackPlugin.options.site)) { %>
-		<link href="<%= htmlWebpackPlugin.options.root %><%= css %>" rel="stylesheet">
+		<link href="<%= htmlWebpackPlugin.options.publicPath %><%= css %>" rel="stylesheet">
 	<% } %>
 <% } %>
 </head>
@@ -56,7 +56,7 @@
 
 <% for (let js of htmlWebpackPlugin.files.js) { %>
 	<% if (js.includes(htmlWebpackPlugin.options.site)) { %>
-		<script type="text/javascript" src="<%= htmlWebpackPlugin.options.root %><%= js %>"></script>
+		<script type="text/javascript" src="<%= htmlWebpackPlugin.options.publicPath %><%= js %>"></script>
 	<% } %>
 <% } %>
 

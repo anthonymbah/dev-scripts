@@ -61,6 +61,6 @@ const config = {
 	}
 };
 
-config.plugins.push(...htmlDefinitions());
+config.plugins.push(...htmlDefinitions({}));
 
 module.exports = config;

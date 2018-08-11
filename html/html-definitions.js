@@ -1,33 +1,38 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const NOT_SET = 'Not-Set';
 
 const defaultPluginOpts = {
 	template: 'html/template.html',
-	title: 'Not Set',
+	title: NOT_SET,
 	inject: false,
-	site: 'Not Set',
-	root: 'dist/',
-	filename: 'Not-Set.html',
+	site: NOT_SET,
+	filename: `${NOT_SET}.html`,
 	metaTags: [{
 		key: 'viewport',
 		value: 'width=device-width, initial-scale=1, shrink-to-fit=no',
-	},
-	{
-		key: 'theme-color',
-		value: '#ffffff',
-	}
-	],
+	}],
 	minify: {
 		collapseWhitespace: true,
 		removeComments: true,
 	}
 };
 
-const sites = [
+const defaultSites = [
 	{ name: 'app', title: 'MY APP', filename: 'App.html' },
 	{ name: 'page', title: 'MY PAGE', filename: 'Page.html' },
 ];
 
-module.exports = () => {
+module.exports = ({
+	publicPath = 'dist/',
+	sites = defaultSites,
+	donotMinify = false
+}) => {
+	defaultPluginOpts.publicPath = publicPath;
+
+	if(donotMinify){
+		delete defaultPluginOpts.minify;
+	}
+
 	return sites.map(s => {
 		const options = {
 			title: s.title,
@@ -35,6 +40,8 @@ module.exports = () => {
 			filename: s.filename,
 		};
 
-		return new HtmlWebpackPlugin(Object.assign(defaultPluginOpts, options));
+		return new HtmlWebpackPlugin(
+			Object.assign(defaultPluginOpts, options)
+		);
 	});
 };
