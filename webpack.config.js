@@ -9,25 +9,10 @@ const {
 const ManifestPlugin = require('webpack-manifest-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const copyHtmlWebpackAddon = require('./add-ons/copy-html-webpack-addon');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const htmlDefinitions = require('./html/html-definitions');
 
-const serialize = manifest => {
-	copyHtmlWebpackAddon({
-		manifest,
-		debug: false,
-		src: 'src/*.html',
-		dist: path.resolve(__dirname, 'dist'),
-	});
-	return JSON.stringify(manifest, null, 2);
-};
-const pattens = [{
-	flatten: true,
-	from: 'src/*.jpg',
-}];
-
-module.exports = {
+const config = {
 	entry: { app: './src/app.js', page: './src/page.js'},
 	output: {
 		path: path.resolve(__dirname, 'dist'),
@@ -49,30 +34,25 @@ module.exports = {
 				use: [{ loader: 'babel-loader' }]
 			},
 			{
-        test: /\.css$/,
-        use: [
-          {
-            loader: MiniCssExtractPlugin.loader,
-          },
-          "css-loader"
-        ]
-      }
-			// {
-			// 	test: /\.html$/,
-			// 	use: ['my-loader']
-			// }
+				test: /\.css$/,
+				use: [
+					{
+						loader: MiniCssExtractPlugin.loader,
+					},
+					'css-loader'
+				]
+			},
 		],},
 	plugins: [
 		new CleanWebpackPlugin(['dist/**/*.*']),
 		new NamedModulesPlugin(),
 		new HotModuleReplacementPlugin(),
 		new ManifestPlugin({ writeToFileEmit: true }),
-		new CopyWebpackPlugin(pattens, { debug: false }),
+		new CopyWebpackPlugin([{ flatten: true, from: 'src/*.jpg',}], { debug: false }),
 		new MiniCssExtractPlugin({
-			filename: "[name].[hash].css",
-      		chunkFilename: "[id].[hash].css"
-    	}),
-		new HtmlWebpackPlugin(),
+			filename: '[name].[hash].css',
+			chunkFilename: '[id].[hash].css'
+		}),
 	],
 	resolveLoader: {
 		alias: {
@@ -80,3 +60,7 @@ module.exports = {
 		}
 	}
 };
+
+config.plugins.push(...htmlDefinitions());
+
+module.exports = config;
